@@ -1,0 +1,14 @@
+---
+- name: Provisionamento de ambiente de desenvolvimento
+  hosts: remote-dev
+  become: true
+
+  vars:
+    target_user: "{{lookup('env', 'TARGET_USER') | default('root') }}"
+    user_home: "/home/{{ lookup('env', 'TARGET_USER') | default('root') }}"
+
+  roles:
+    - devtools
+    - docker
+    - zsh
+    - dotfiles

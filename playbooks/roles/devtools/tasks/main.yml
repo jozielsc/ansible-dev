@@ -1,0 +1,39 @@
+---
+- name: Instala pacotes úteis 
+  community.general.xbps:
+    name: "{{ item }}"
+  loop:
+    - btop
+    - git
+    - stow
+    - fzf
+    - direnv
+    - lsd
+    - python3-pip
+    - python3-pipx
+    - unzip
+    - curl
+    - wget
+    - stow
+    - tmux
+  ignore_errors: true
+  register: package_install_results
+  loop_control:
+    label: "Instalando pacote: {{ item }}"
+
+- name: Rodar ensurepath do python3-pipx
+  command: pipx ensurepath 
+  args:
+    creates: "{{ ansible_env.HOME }}/.local/bin/pipx"
+
+- name: Clonar repositorio tmux-plugins
+  become_user: "{{ target_user }}"
+  git:
+    repo: https://github.com/tmux-plugins/tpm
+    dest: "{{ user_home }}/.tmux/plugins/tpm"
+
+- name: Verificar ser houve falhas na instalação dos pacotes
+  ansible.builtin.fail:
+    msg: "Falha ao instalar um ou mais pacotes"
+
+  when: package_install_results.results | selectattr('failed', 'true') | list | length > 0

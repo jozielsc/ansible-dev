@@ -1,0 +1,20 @@
+- name: Clonar repositório dotfiles
+  become_user: "{{ target_user }}"
+  git:
+    repo: https://github.com/jozielsc/dotfiles
+    dest: "{{ user_home }}/.dotfiles"
+
+- name: Obter lista de pacotes dotfiles
+  find:
+    paths: "{{ user_home }}/.dotfiles"
+    file_type: directory
+    depth: 1
+  register: dotfiles_packages
+
+- name: Criar links simbólicos com stow
+  command: > 
+    stow --dir={{ user_home }}/.dotfiles --target={{ user_home }} {{ item.path | basename }}
+  
+  loop: "{{ dotfiles_packages.files }}"
+
+

@@ -1,0 +1,23 @@
+---
+- name: Instala Docker e Compose
+  community.general.xbps:
+    name:
+      - docker
+    state: present
+
+- name: Adiciona usuário ao grupo docker
+  user:
+    name: "{{ ansible_user }}"
+    groups: docker
+    append: yes
+
+- name: Habilitar serviço docker 
+  file:
+    src: /etc/sv/docker 
+    dest: /var/service/docker 
+    state: link 
+
+- name: Garantir que o docker está rodando
+  command: "sv up docker"
+  register: docker_status
+  changed_when: "'already up' not in docker_status.stdout"
