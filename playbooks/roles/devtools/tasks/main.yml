@@ -16,6 +16,7 @@
     - wget
     - stow
     - tmux
+    - kubectl
   ignore_errors: true
   register: package_install_results
   loop_control:
