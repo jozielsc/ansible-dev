@@ -38,3 +38,9 @@
     msg: "Falha ao instalar um ou mais pacotes"
 
   when: package_install_results.results | selectattr('failed', 'true') | list | length > 0
+
+- name: Instala pacote ansible
+  community.general.xbps:
+    name:
+      - ansible
+    state: present
