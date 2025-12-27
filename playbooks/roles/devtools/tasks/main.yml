@@ -23,9 +23,8 @@
     label: "Instalando pacote: {{ item }}"
 
 - name: Rodar ensurepath do python3-pipx
-  command: pipx ensurepath 
-  args:
-    creates: "{{ ansible_env.HOME }}/.local/bin/pipx"
+  shell: |
+    python3 -m pipx ensurepath
 
 - name: Clonar repositorio tmux-plugins
   become_user: "{{ target_user }}"
@@ -33,14 +32,20 @@
     repo: https://github.com/tmux-plugins/tpm
     dest: "{{ user_home }}/.tmux/plugins/tpm"
 
+- name: Instala pacote ansible
+  community.general.xbps:
+    name:
+      - ansible
+    state: present
+
+- name: Instalar UV
+  shell: |
+    curl -LsSf https://astral.sh/uv/install.sh | sh 
+
 - name: Verificar ser houve falhas na instalação dos pacotes
   ansible.builtin.fail:
     msg: "Falha ao instalar um ou mais pacotes"
 
   when: package_install_results.results | selectattr('failed', 'true') | list | length > 0
 
-- name: Instala pacote ansible
-  community.general.xbps:
-    name:
-      - ansible
-    state: present
+

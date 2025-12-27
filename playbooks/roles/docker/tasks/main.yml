@@ -17,7 +17,7 @@
     dest: /var/service/docker 
     state: link 
 
-- name: Garantir que o docker está rodando
-  command: "sv up docker"
-  register: docker_status
-  changed_when: "'already up' not in docker_status.stdout"
+#- name: Garantir que o docker está rodando
+# command: "sv up docker"
+#  register: docker_status
+#  changed_when: "'already up' not in docker_status.stdout"
